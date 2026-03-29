@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.2.0" type="partial_results">
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.example.generalExpanseTracker.LoginActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.color.black"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="4"
+            column="12"
+            startOffset="111"
+            endLine="4"
+            endColumn="24"
+            endOffset="123"/>
+        <entry
+            name="model"
+            string="color[primary_green(U),endColor(U),line(U),black(D),startColor(U),centerColor(U),gray(D),white(U)],drawable[gradient_background_dark(U)],id[edtMobile(U),btnAddExpense(U),etBalance(U),etMobile(U),edtAmount(U),etPassword(U),etEmail(U),tvRegister(U),etAccountNumber(U),btnRegister(U),btnLogin(U),tvBalance(U),spinnerType(U),etBankName(U),spinnerCategory(U),BarChart(U),tvMonthlySpend(U),etUsername(U),edtDesc(U),etName(U),btnSubmit(U)],layout[activity_add_transaction(U),activity_login(U),activity_main(U),activity_register(U)],style[Theme_MyApp(D),Theme_MaterialComponents_DayNight_DarkActionBar(R)];8^5^1^4,1e^8^0^7,1f^8^7^0^2,21^8^7^0,22^23;;;"/>
+        <location id="R.style.Theme_MyApp"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/themes.xml"
+            line="2"
+            column="12"
+            startOffset="23"
+            endLine="2"
+            endColumn="30"
+            endOffset="41"/>
+        <location id="R.color.gray"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="5"
+            column="12"
+            startOffset="151"
+            endLine="5"
+            endColumn="23"
+            endOffset="162"/>
+    </map>
+
+</incidents>

@@ -1,0 +1,4 @@
+
+// replace your project name 
+rootProject.name = "generalExpanseTracker"
+include ':app'

@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/home/kunalbhande/Desktop/kunal/java/Income-expanse-calcultor/app"
+    name=":app"
+    type="APP"
+    maven="generalExpanseTracker:app:"
+    agpVersion="8.2.0"
+    buildFolder="build"
+    bootClassPath="/home/kunalbhande/Android/Sdk/platforms/android-34/android.jar:/home/kunalbhande/Android/Sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-34"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="debug"/>
+</lint-module>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="centerColor">#1e1e1e</color>
+    <color name="endColor">#121212</color>
+    <color name="gray">#B0B0B0</color>
+    <color name="line">#BB86FC</color>
+    <color name="primary_green">#4CAF50</color>
+    <color name="startColor">#1a1a1a</color>
+    <color name="white">#FFFFFF</color>
+    <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar"/>
+</resources>
