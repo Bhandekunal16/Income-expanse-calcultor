@@ -21,8 +21,8 @@ public interface ApiService {
     @POST("create/payment")
     Call<Map<String, Object>> createPayment(@Body PaymentRequest request);
 
-    @POST("get/txn")
-    Call<Object> getTransactions(@Body Map<String, String> body);
+    @POST("/get/txn")
+    Call<Map<String, Object>> getTransactions(@Body Map<String, String> body);
 
     @POST("get/monthly/txn")
     Call<Object> getMonthlyTxn(@Body Map<String, String> body);

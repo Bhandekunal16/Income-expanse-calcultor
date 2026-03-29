@@ -48,6 +48,14 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
+        String NAME_REGEX = "^[A-Za-z ]{2,50}$";
+        String MOBILE_REGEX = "^[6-9]\\d{9}$";
+        String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        String USERNAME_REGEX = "^[a-zA-Z0-9_]{4,20}$";
+        String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@#$%^&+=!]{6,}$";
+        String BANK_REGEX = "^[A-Za-z ]{2,50}$";
+        String ACCOUNT_REGEX = "^\\d{9,18}$";
+        String BALANCE_REGEX = "^\\d+(\\.\\d{1,2})?$";
 
         String name = etName.getText().toString();
         String mobile = etMobile.getText().toString();
@@ -57,6 +65,22 @@ public class RegisterActivity extends AppCompatActivity {
         String bank = etBank.getText().toString().trim();
         String number = etAccNumber.getText().toString().trim();
         String balanceStr = etBalance.getText().toString().trim();
+
+        boolean isValid = true;
+
+        isValid &= validate(etName, name, NAME_REGEX, "Invalid name");
+        isValid &= validate(etMobile, mobile, MOBILE_REGEX, "Invalid mobile");
+        isValid &= validate(etEmail, email, EMAIL_REGEX, "Invalid email");
+        isValid &= validate(etUsername, username, USERNAME_REGEX, "Invalid username");
+        isValid &= validate(etPassword, password, PASSWORD_REGEX, "Weak password");
+        isValid &= validate(etBank, bank, BANK_REGEX, "Invalid bank");
+        isValid &= validate(etAccNumber, number, ACCOUNT_REGEX, "Invalid account");
+        isValid &= validate(etBalance, balanceStr, BALANCE_REGEX, "Invalid balance");
+
+        if (!isValid) {
+            Toast.makeText(this, "Please fix highlighted errors", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (bank.isEmpty() || number.isEmpty() || balanceStr.isEmpty()) {
             Toast.makeText(this, "Account details required", Toast.LENGTH_SHORT).show();
@@ -90,8 +114,6 @@ public class RegisterActivity extends AppCompatActivity {
                         .putString("balanceStr", balanceStr)
                         .apply();
 
-
-
                 startActivity(intent);
                 finish();
             }
@@ -101,5 +123,13 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private boolean validate(EditText et, String value, String regex, String msg) {
+        if (value.isEmpty() || !value.matches(regex)) {
+            et.setError(msg);
+            return false;
+        }
+        return true;
     }
 }

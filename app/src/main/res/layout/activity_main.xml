@@ -1,53 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="16dp"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/gradient_background_dark"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:padding="16dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Balance -->
-        <TextView
-            android:id="@+id/tvBalance"
-            android:text="₹ 0"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <!-- Monthly Spend -->
-        <TextView
-            android:id="@+id/tvMonthlySpend"
-            android:text="Spent: ₹0"
-            android:layout_marginBottom="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/BarChart"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="16dp"
+            card_view:cardElevation="6dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:padding="16dp"
+                android:orientation="vertical"
+                android:background="@color/bgEnd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="Total Balance"
+                    android:textSize="14sp"
+                    
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tvBalance"
+                    android:text="₹0.00"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:textColor="#2E7D32"
+                    android:layout_marginTop="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
 
-        <!-- Quick Actions -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
+        <!-- 📊 CHART CARD -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="16dp"
+            card_view:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
 
-            <Button
-                android:id="@+id/btnAddExpense"
-                android:text="Add Expense"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:padding="12dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:background="@color/bgEnd"
+                android:layout_height="wrap_content">
 
-        </LinearLayout>
+                <TextView
+                    android:text="Spending Overview"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp"
+                     android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/BarChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="260dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <!-- ⚡ ACTION BUTTONS -->
+        <Button
+            android:id="@+id/btnAddExpense"
+            android:text="Add Expense"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="#1976D2"
+            android:textColor="#FFF"
+            android:layout_marginBottom="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <Button
+            android:id="@+id/btnViewTransactions"
+            android:text="View Transactions"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="#EEEEEE"
+            android:textColor="#333"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
 
     </LinearLayout>
 

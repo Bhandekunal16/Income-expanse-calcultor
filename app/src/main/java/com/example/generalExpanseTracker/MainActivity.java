@@ -3,17 +3,20 @@ package com.example.generalExpanseTracker;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.*;
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.DecimalFormat;
+import java.util.*;
 
 import com.example.generalExpanseTracker.api.ApiClient;
 import com.example.generalExpanseTracker.api.ApiService;
+
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-
-import java.util.*;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,12 +24,14 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tvBalance, tvMonthlySpend;
-    Button btnAddExpense;
-
+    TextView tvBalance;
+    Button btnAddExpense, btnViewTransactions;
     BarChart barChart;
 
     ApiService apiService;
+
+    String username;
+    String mobile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,51 +39,93 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tvBalance = findViewById(R.id.tvBalance);
-        tvMonthlySpend = findViewById(R.id.tvMonthlySpend);
         btnAddExpense = findViewById(R.id.btnAddExpense);
+        btnViewTransactions = findViewById(R.id.btnViewTransactions);
         barChart = findViewById(R.id.BarChart);
 
         apiService = ApiClient.getClient().create(ApiService.class);
 
-        String mobile = getIntent().getStringExtra("mobile");
+        mobile = getIntent().getStringExtra("mobile");
 
-        String username = getSharedPreferences("app", MODE_PRIVATE)
+        username = getSharedPreferences("app", MODE_PRIVATE)
                 .getString("username", "");
 
-        float balance = getSharedPreferences("app", MODE_PRIVATE)
-                .getFloat("balance", 0f);
-
-        tvBalance.setText(String.valueOf(balance));
-
-        loadDashboardData(mobile);
-        loadStatistics(username); // 🔥 GRAPH CALL
+        // 🔥 INITIAL LOAD
+        refreshDashboard();
 
         btnAddExpense.setOnClickListener(v -> startActivity(new Intent(this, AddTransactionActivity.class)));
+
+        btnViewTransactions.setOnClickListener(v -> startActivity(new Intent(this, TransactionHistoryActivity.class)));
     }
 
-    private void loadDashboardData(String mobile) {
+    // 🔥 AUTO REFRESH WHEN RETURNING
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshDashboard();
+    }
+
+    // 🔥 MAIN REFRESH METHOD
+    private void refreshDashboard() {
+
+        if (mobile != null && !mobile.isEmpty()) {
+            loadBalance(mobile);
+        }
+
+        if (username != null && !username.isEmpty()) {
+            loadStatistics(username);
+        }
+    }
+
+    // 💰 BALANCE API
+    private void loadBalance(String mobile) {
 
         Map<String, String> body = new HashMap<>();
         body.put("mobile", mobile);
 
-        apiService.getMonthlyTxn(body).enqueue(new Callback<Object>() {
+        apiService.loginUser(body).enqueue(new Callback<Map<String, Object>>() {
+
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                tvMonthlySpend.setText("Spent: ₹ " + response.body());
+            public void onResponse(Call<Map<String, Object>> call,
+                    Response<Map<String, Object>> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+
+                    try {
+                        Map<String, Object> res = response.body();
+                        Boolean status = (Boolean) res.get("status");
+
+                        if (status != null && status) {
+
+                            Map<String, Object> data = (Map<String, Object>) res.get("data");
+
+                            List<Map<String, Object>> accounts = (List<Map<String, Object>>) data.get("accounts");
+
+                            if (accounts != null && !accounts.isEmpty()) {
+
+                                Map<String, Object> acc = accounts.get(0);
+
+                                double balance = safeDouble(acc.get("balance"));
+
+                                updateBalanceUI(balance);
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        showToast("Balance error: " + e.getMessage());
+                    }
+                }
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                showToast("Error: " + t.getMessage());
             }
         });
     }
 
-    // 🔥 NEW METHOD FOR GRAPH
+    // 📊 GRAPH API
     private void loadStatistics(String username) {
-
-        if (username == null || username.isEmpty())
-            return;
 
         Map<String, String> body = new HashMap<>();
         body.put("username", username);
@@ -94,6 +141,9 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         Map<String, Object> res = response.body();
                         Map<String, Object> data = (Map<String, Object>) res.get("data");
+
+                        if (data == null)
+                            return;
 
                         List<String> dates = (List<String>) data.get("date");
 
@@ -114,10 +164,8 @@ public class MainActivity extends AppCompatActivity {
                             if (txns != null) {
                                 for (Map<String, Object> txn : txns) {
 
-                                    String type = (String) txn.get("type");
-
-                                    double amount = Double.parseDouble(
-                                            txn.get("transactionAmount").toString());
+                                    String type = safeString(txn.get("type"));
+                                    double amount = safeDouble(txn.get("transactionAmount"));
 
                                     if ("credit".equalsIgnoreCase(type)) {
                                         creditSum += amount;
@@ -136,37 +184,46 @@ public class MainActivity extends AppCompatActivity {
                         renderChart(dates, creditEntries, debitEntries);
 
                     } catch (Exception e) {
-                        Toast.makeText(MainActivity.this,
-                                "Parse error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        showToast("Parse error: " + e.getMessage());
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<Map<String, Object>> call, Throwable t) {
-                Toast.makeText(MainActivity.this,
-                        "Graph error: " + t.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                showToast("Graph error: " + t.getMessage());
             }
         });
     }
 
-    // 🔥 CHART RENDER
+    // 🎯 BALANCE UI
+    private void updateBalanceUI(double balance) {
+        DecimalFormat df = new DecimalFormat("₹0.00");
+        tvBalance.setText(df.format(balance));
+
+        if (balance >= 0) {
+            tvBalance.setTextColor(Color.parseColor("#22C55E"));
+        } else {
+            tvBalance.setTextColor(Color.parseColor("#EF4444"));
+        }
+    }
+
+    // 📊 CHART RENDER
     private void renderChart(List<String> labels,
             List<BarEntry> creditEntries,
             List<BarEntry> debitEntries) {
 
         BarDataSet creditSet = new BarDataSet(creditEntries, "Credit");
-        creditSet.setColor(Color.GREEN);
+        creditSet.setColor(Color.parseColor("#22C55E"));
 
         BarDataSet debitSet = new BarDataSet(debitEntries, "Debit");
-        debitSet.setColor(Color.RED);
+        debitSet.setColor(Color.parseColor("#EF4444"));
 
         BarData data = new BarData(creditSet, debitSet);
         data.setBarWidth(0.35f);
 
         barChart.setData(data);
+        barChart.setFitBars(true);
 
         barChart.getXAxis().setAxisMinimum(0);
         barChart.getXAxis().setAxisMaximum(labels.size());
@@ -178,8 +235,25 @@ public class MainActivity extends AppCompatActivity {
         xAxis.setGranularity(1f);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 
-        barChart.getDescription().setText("Transactions");
-        barChart.animateY(1000);
+        barChart.getDescription().setText("");
+        barChart.animateY(800);
         barChart.invalidate();
+    }
+
+    // 🔧 HELPERS
+    private String safeString(Object obj) {
+        return obj != null ? String.valueOf(obj) : "";
+    }
+
+    private double safeDouble(Object obj) {
+        try {
+            return obj != null ? Double.parseDouble(String.valueOf(obj)) : 0;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private void showToast(String msg) {
+        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 }
