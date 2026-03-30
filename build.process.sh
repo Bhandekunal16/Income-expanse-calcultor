@@ -4,7 +4,7 @@ compiler="./gradlew"
 command=$(emulator -list-avds | head -n 1)
 
 build() {
-    # adb -e uninstall com.example.generalExpanseTracker &&
+    adb -e uninstall com.example.generalExpanseTracker &&
     $compiler clean &&
     $compiler build --stacktrace &&
     $compiler assembleDebug &&
