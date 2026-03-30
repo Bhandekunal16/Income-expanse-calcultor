@@ -83,6 +83,8 @@ public class AddTransactionActivity extends AppCompatActivity {
             }
 
             double amount = Double.parseDouble(amountStr);
+            long time = System.currentTimeMillis();
+
 
             String username = getSharedPreferences("app", MODE_PRIVATE)
                     .getString("username", "");
@@ -98,6 +100,7 @@ public class AddTransactionActivity extends AppCompatActivity {
                     amount,
                     desc,
                     type,
+                    time,
                     category);
 
             ApiService apiService = ApiClient.getClient().create(ApiService.class);

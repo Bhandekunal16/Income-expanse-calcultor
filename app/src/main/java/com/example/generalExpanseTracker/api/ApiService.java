@@ -31,14 +31,14 @@ public interface ApiService {
     Call<Map<String, Object>> getStatistics(@Body Map<String, String> body);
 
     // 🎯 BUDGET
-    @POST("add/budget")
-    Call<Object> addBudget(@Body Map<String, String> body);
+    @POST("/add/budget")
+    Call<Map<String, Object>> addBudget(@Body Map<String, Object> body);
 
-    @POST("get/budget")
-    Call<Object> getBudget(@Body Map<String, String> body);
+    @POST("/get/budget")
+    Call<Map<String, Object>> getBudget(@Body Map<String, Object> body);
 
-    @POST("update/budget")
-    Call<Object> updateBudget(@Body Map<String, String> body);
+    @POST("/update/budget")
+    Call<Map<String, Object>> updateBudget(@Body Map<String, Object> body);
 
     // 📤 REPORT
     @GET("send/report/")

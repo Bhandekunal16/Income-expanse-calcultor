@@ -25,7 +25,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     TextView tvBalance;
-    Button btnAddExpense, btnViewTransactions;
+    Button btnAddExpense, btnViewTransactions, btnBudget;
     BarChart barChart;
 
     ApiService apiService;
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         tvBalance = findViewById(R.id.tvBalance);
         btnAddExpense = findViewById(R.id.btnAddExpense);
         btnViewTransactions = findViewById(R.id.btnViewTransactions);
+        btnBudget = findViewById(R.id.btnBudget);
         barChart = findViewById(R.id.BarChart);
 
         apiService = ApiClient.getClient().create(ApiService.class);
@@ -54,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
         refreshDashboard();
 
         btnAddExpense.setOnClickListener(v -> startActivity(new Intent(this, AddTransactionActivity.class)));
-
         btnViewTransactions.setOnClickListener(v -> startActivity(new Intent(this, TransactionHistoryActivity.class)));
+        btnBudget.setOnClickListener(v -> startActivity(new Intent(this, BudgetActivity.class)));
     }
 
     // 🔥 AUTO REFRESH WHEN RETURNING
