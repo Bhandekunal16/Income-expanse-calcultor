@@ -287,23 +287,14 @@ public class AddTransactionActivity extends BaseActivity {
             return;
 
         int progress = (int) ((totalSpent / totalBudget) * 100);
+        String message = "Used ₹" + totalSpent + " of ₹" + totalBudget + " (" + progress + "%)";
 
-        String message = "Used ₹" + totalSpent +
-                " of ₹" + totalBudget +
-                " (" + progress + "%)";
-
-        NotificationHelper.showNotification(
-                this,
-                "Transaction Added 💸",
-                message);
-
+        NotificationHelper.showNotification(this, "Transaction Added 💸", message);
         checkThreshold(progress, message);
-
         finish();
     }
 
     private void checkThreshold(int progress, String message) {
-
         if (progress >= 100 && lastNotifiedLevel < 100) {
             notifyUser("Budget Exhausted 🚨", message);
             lastNotifiedLevel = 100;
