@@ -65,22 +65,22 @@ public class RegisterActivity extends AppCompatActivity {
 
         boolean isValid = true;
 
-        isValid &= validate(etName, name, NAME_REGEX, "Invalid name");
-        isValid &= validate(etMobile, mobile, MOBILE_REGEX, "Invalid mobile");
-        isValid &= validate(etEmail, email, EMAIL_REGEX, "Invalid email");
-        isValid &= validate(etUsername, username, USERNAME_REGEX, "Invalid username");
-        isValid &= validate(etPassword, password, PASSWORD_REGEX, "Weak password");
-        isValid &= validate(etBank, bank, BANK_REGEX, "Invalid bank");
-        isValid &= validate(etAccNumber, number, ACCOUNT_REGEX, "Invalid account");
-        isValid &= validate(etBalance, balanceStr, BALANCE_REGEX, "Invalid balance");
+        isValid &= validate(etName, name, NAME_REGEX, getStringByKey("invalidName"));
+        isValid &= validate(etMobile, mobile, MOBILE_REGEX, getStringByKey("invalidMobile"));
+        isValid &= validate(etEmail, email, EMAIL_REGEX, getStringByKey("invalidEmail"));
+        isValid &= validate(etUsername, username, USERNAME_REGEX, getStringByKey("invalidUsername"));
+        isValid &= validate(etPassword, password, PASSWORD_REGEX, getStringByKey("weakPassword"));
+        isValid &= validate(etBank, bank, BANK_REGEX, getStringByKey("invalidBank"));
+        isValid &= validate(etAccNumber, number, ACCOUNT_REGEX, getStringByKey("invalidAccount"));
+        isValid &= validate(etBalance, balanceStr, BALANCE_REGEX, getStringByKey("invalidBalance"));
 
         if (!isValid) {
-            notification("Please fix highlighted errors");
+            notification(getStringByKey("fix_errors"));
             return;
         }
 
         if (bank.isEmpty() || number.isEmpty() || balanceStr.isEmpty()) {
-            notification("Account details required");
+            notification(getStringByKey("account_required"));
             return;
         }
 
@@ -94,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
         call.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
-                notification("Registered Successfully");
+                notification(getStringByKey("register_success"));
                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                 intent.putExtra("mobile", mobile);
                 String username = etUsername.getText().toString();
@@ -126,5 +126,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void notification(String text) {
         Toast.makeText(RegisterActivity.this, text, Toast.LENGTH_LONG).show();
+    }
+
+    private String getStringByKey(String key) {
+        int resId = getResources().getIdentifier(key, "string", getPackageName());
+        return resId != 0 ? getString(resId) : key;
     }
 }

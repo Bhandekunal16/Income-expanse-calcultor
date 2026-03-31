@@ -1,0 +1,15 @@
+<resources>
+    <string name="invalid_name">Invalid name</string>
+    <string name="invalid_mobile">Invalid mobile</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="invalid_username">Invalid username</string>
+    <string name="weak_password">Weak password</string>
+    <string name="invalid_bank">Invalid bank</string>
+    <string name="invalid_account">Invalid account</string>
+    <string name="invalid_balance">Invalid balance</string>
+
+    <string name="fix_errors">Please fix highlighted errors</string>
+    <string name="account_required">Account details required</string>
+    <string name="register_success">Registered Successfully</string>
+    <string name="error_prefix">Error: </string>
+</resources>
