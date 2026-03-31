@@ -46,14 +46,20 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         holder.tvCategory.setText(txn.category);
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
         holder.tvDate.setText(sdf.format(new Date(txn.time)));
+        AmountUI(holder, txn);
+    }
 
+    private void AmountUI(@NonNull ViewHolder holder, TransactionModel txn) {
         if ("credit".equalsIgnoreCase(txn.type)) {
-            holder.tvAmount.setText("+ ₹" + txn.amount);
-            holder.tvAmount.setTextColor(Color.GREEN);
+            AmountUIColor(holder, "+ ₹" + txn.amount, Color.GREEN);
         } else {
-            holder.tvAmount.setText("- ₹" + txn.amount);
-            holder.tvAmount.setTextColor(Color.RED);
+            AmountUIColor(holder, "- ₹" + txn.amount, Color.RED);
         }
+    }
+
+    private void AmountUIColor(@NonNull ViewHolder holder, String text, int color) {
+        holder.tvAmount.setText(text);
+        holder.tvAmount.setTextColor(color);
     }
 
     @Override
