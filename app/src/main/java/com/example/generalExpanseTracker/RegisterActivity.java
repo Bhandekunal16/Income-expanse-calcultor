@@ -24,6 +24,14 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText etName, etMobile, etEmail, etUsername, etPassword, etBank, etAccNumber, etBalance;
     private Button btnRegister;
     private ApiService apiService;
+    private static final String NAME_REGEX = "^[A-Za-z ]{2,50}$";
+    private static final String MOBILE_REGEX = "^[6-9]\\d{9}$";
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    private static final String USERNAME_REGEX = "^[a-zA-Z0-9_]{4,20}$";
+    private static final String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@#$%^&+=!]{6,}$";
+    private static final String BANK_REGEX = "^[A-Za-z ]{2,50}$";
+    private static final String ACCOUNT_REGEX = "^\\d{9,18}$";
+    private static final String BALANCE_REGEX = "^\\d+(\\.\\d{1,2})?$";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +54,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
-        String NAME_REGEX = "^[A-Za-z ]{2,50}$";
-        String MOBILE_REGEX = "^[6-9]\\d{9}$";
-        String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        String USERNAME_REGEX = "^[a-zA-Z0-9_]{4,20}$";
-        String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d@#$%^&+=!]{6,}$";
-        String BANK_REGEX = "^[A-Za-z ]{2,50}$";
-        String ACCOUNT_REGEX = "^\\d{9,18}$";
-        String BALANCE_REGEX = "^\\d+(\\.\\d{1,2})?$";
-
         String name = etName.getText().toString();
         String mobile = etMobile.getText().toString();
         String email = etEmail.getText().toString();
@@ -76,12 +75,12 @@ public class RegisterActivity extends AppCompatActivity {
         isValid &= validate(etBalance, balanceStr, BALANCE_REGEX, "Invalid balance");
 
         if (!isValid) {
-            Toast.makeText(this, "Please fix highlighted errors", Toast.LENGTH_SHORT).show();
+            notification("Please fix highlighted errors");
             return;
         }
 
         if (bank.isEmpty() || number.isEmpty() || balanceStr.isEmpty()) {
-            Toast.makeText(this, "Account details required", Toast.LENGTH_SHORT).show();
+            notification("Account details required");
             return;
         }
 
@@ -95,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
         call.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
-                Toast.makeText(RegisterActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+                notification("Registered Successfully");
                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                 intent.putExtra("mobile", mobile);
                 String username = etUsername.getText().toString();
@@ -112,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                notification("Error: " + t.getMessage());
             }
         });
     }
@@ -123,5 +122,9 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private void notification(String text) {
+        Toast.makeText(RegisterActivity.this, text, Toast.LENGTH_LONG).show();
     }
 }
