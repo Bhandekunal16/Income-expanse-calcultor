@@ -58,12 +58,10 @@ public class AddTransactionActivity extends BaseActivity {
 
         edtAmount = findViewById(R.id.edtAmount);
         edtDesc = findViewById(R.id.edtDesc);
-        // edtBank = findViewById(R.id.edtBank);
         spinnerType = findViewById(R.id.spinnerType);
         spinnerCategory = findViewById(R.id.spinnerCategory);
         btnSubmit = findViewById(R.id.btnSubmit);
 
-        // Spinner setup
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
@@ -137,7 +135,6 @@ public class AddTransactionActivity extends BaseActivity {
                                     "Transaction Added",
                                     Toast.LENGTH_SHORT).show();
 
-                            // finish();
                             getBudgetAndNotify();
 
                         } else {
@@ -190,7 +187,6 @@ public class AddTransactionActivity extends BaseActivity {
 
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        // -------- GET BUDGET --------
         Map<String, Object> body = new HashMap<>();
         body.put("username", username);
 
@@ -229,7 +225,6 @@ public class AddTransactionActivity extends BaseActivity {
             }
         });
 
-        // -------- GET TRANSACTIONS --------
         Map<String, String> txnBody = new HashMap<>();
         txnBody.put("username", username);
 
@@ -304,7 +299,7 @@ public class AddTransactionActivity extends BaseActivity {
 
         checkThreshold(progress, message);
 
-        finish(); // ✅ close screen AFTER notification
+        finish();
     }
 
     private void checkThreshold(int progress, String message) {
