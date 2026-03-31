@@ -71,7 +71,7 @@ public class VpaActivity extends AppCompatActivity {
     private void loadAccount() {
 
         Map<String, String> body = new HashMap<>();
-         Log.d("VPA_DEBUG", mobile);
+        Log.d("VPA_DEBUG", mobile);
         body.put("mobile", mobile);
 
         apiService.loginUser(body).enqueue(new Callback<Map<String, Object>>() {
@@ -109,7 +109,7 @@ public class VpaActivity extends AppCompatActivity {
 
                                 Object vpaObj = acc.get("vpa");
 
-                                 Log.d("VPA_DEBUG", String.valueOf(vpaObj));
+                                Log.d("VPA_DEBUG", String.valueOf(vpaObj));
 
                                 if (vpaObj != null) {
                                     String vpa = String.valueOf(vpaObj);
@@ -155,6 +155,7 @@ public class VpaActivity extends AppCompatActivity {
         String username = getSharedPreferences("app", MODE_PRIVATE)
                 .getString("username", "");
 
+        Log.d("VPA_DEBUG_username", username);
         Map<String, String> body = new HashMap<>();
         body.put("username", username);
         body.put("vpa", vpa);
