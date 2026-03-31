@@ -14,16 +14,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
-
-    List<TransactionModel> list;
+    private List<TransactionModel> list;
 
     public TransactionAdapter(List<TransactionModel> list) {
         this.list = list;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
-        TextView tvDesc, tvAmount, tvDate, tvCategory;
+        private TextView tvDesc, tvAmount, tvDate, tvCategory;
 
         public ViewHolder(View view) {
             super(view);
@@ -37,24 +35,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_transaction, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_transaction, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         TransactionModel txn = list.get(position);
-
         holder.tvDesc.setText(txn.desc);
         holder.tvCategory.setText(txn.category);
-
-        // Date format
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
         holder.tvDate.setText(sdf.format(new Date(txn.time)));
 
-        // Amount + color
         if ("credit".equalsIgnoreCase(txn.type)) {
             holder.tvAmount.setText("+ ₹" + txn.amount);
             holder.tvAmount.setTextColor(Color.GREEN);
