@@ -7,15 +7,19 @@ public class PaymentRequest {
     private double transactionAmount;
     private String transactionDesc;
     private String type;
+    private long time;            
     private String categories;
 
     public PaymentRequest(String bankName, String username,
-            double transactionAmount, String transactionDesc, String type, String categories) {
+                          double transactionAmount, String transactionDesc,
+                          String type, long time, String categories) {
+
         this.bankName = bankName;
         this.username = username;
         this.transactionAmount = transactionAmount;
         this.transactionDesc = transactionDesc;
         this.type = type;
+        this.time = time;
         this.categories = categories;
     }
 }

@@ -28,7 +28,6 @@
                 <TextView
                     android:text="Total Balance"
                     android:textSize="14sp"
-                    
                     android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -66,7 +65,7 @@
                     android:textStyle="bold"
                     android:textSize="16sp"
                     android:layout_marginBottom="8dp"
-                     android:textColor="@color/white"
+                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -93,6 +92,26 @@
         <Button
             android:id="@+id/btnViewTransactions"
             android:text="View Transactions"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="#EEEEEE"
+            android:textColor="#333"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <Button
+            android:id="@+id/btnBudget"
+            android:text="Budgets"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="#EEEEEE"
+            android:textColor="#333"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <Button
+            android:id="@+id/btnVpa"
+            android:text="Collect Money"
             android:textAllCaps="false"
             android:textSize="16sp"
             android:backgroundTint="#EEEEEE"
