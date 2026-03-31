@@ -2,7 +2,12 @@ package com.example.generalExpanseTracker;
 
 import android.os.Bundle;
 import android.widget.*;
+import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Calendar;
 
 import com.example.generalExpanseTracker.api.ApiClient;
 import com.example.generalExpanseTracker.api.ApiService;
@@ -21,6 +26,14 @@ public class AddTransactionActivity extends BaseActivity {
     Spinner spinnerType;
     Spinner spinnerCategory;
     Button btnSubmit;
+
+    double totalBudget = 0;
+    double totalSpent = 0;
+
+    boolean isBudgetLoaded = false;
+    boolean isTransactionsLoaded = false;
+
+    private int lastNotifiedLevel = 0;
 
     String[] expenseCategories = {
             "food", "transport", "shopping", "bills", "entertainment",
@@ -88,7 +101,6 @@ public class AddTransactionActivity extends BaseActivity {
             double amount = Double.parseDouble(amountStr);
             long time = System.currentTimeMillis();
 
-
             String username = getSharedPreferences("app", MODE_PRIVATE)
                     .getString("username", "");
 
@@ -125,7 +137,8 @@ public class AddTransactionActivity extends BaseActivity {
                                     "Transaction Added",
                                     Toast.LENGTH_SHORT).show();
 
-                            finish();
+                            // finish();
+                            getBudgetAndNotify();
 
                         } else {
                             Toast.makeText(AddTransactionActivity.this,
@@ -168,5 +181,169 @@ public class AddTransactionActivity extends BaseActivity {
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(adapter);
+    }
+
+    private void getBudgetAndNotify() {
+
+        String username = getSharedPreferences("app", MODE_PRIVATE)
+                .getString("username", "");
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        // -------- GET BUDGET --------
+        Map<String, Object> body = new HashMap<>();
+        body.put("username", username);
+
+        isBudgetLoaded = false;
+        isTransactionsLoaded = false;
+
+        apiService.getBudget(body).enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call,
+                    Response<Map<String, Object>> response) {
+
+                totalBudget = 0;
+
+                if (response.body() != null) {
+                    Object dataObj = response.body().get("data");
+
+                    if (dataObj instanceof Map) {
+                        Map<String, Object> data = (Map<String, Object>) dataObj;
+                        totalBudget = parseDoubleSafe(data.get("amount"));
+                    } else if (dataObj instanceof List) {
+                        List<?> list = (List<?>) dataObj;
+                        if (!list.isEmpty() && list.get(0) instanceof Map) {
+                            Map<String, Object> data = (Map<String, Object>) list.get(0);
+                            totalBudget = parseDoubleSafe(data.get("amount"));
+                        }
+                    }
+                }
+
+                isBudgetLoaded = true;
+                tryNotify();
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Log.e("BUDGET_ERROR", t.getMessage());
+            }
+        });
+
+        // -------- GET TRANSACTIONS --------
+        Map<String, String> txnBody = new HashMap<>();
+        txnBody.put("username", username);
+
+        apiService.getTransactions(txnBody).enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call,
+                    Response<Map<String, Object>> response) {
+
+                totalSpent = 0;
+
+                if (response.body() != null) {
+                    Object dataObj = response.body().get("data");
+
+                    if (dataObj instanceof List) {
+                        List<?> list = (List<?>) dataObj;
+
+                        Calendar now = Calendar.getInstance();
+
+                        for (Object obj : list) {
+                            if (!(obj instanceof Map))
+                                continue;
+
+                            Map<?, ?> txn = (Map<?, ?>) obj;
+
+                            if (!"debit".equals(String.valueOf(txn.get("type"))))
+                                continue;
+
+                            long time = parseLongSafe(txn.get("time"));
+
+                            Calendar txnCal = Calendar.getInstance();
+                            txnCal.setTimeInMillis(time);
+
+                            if (txnCal.get(Calendar.MONTH) == now.get(Calendar.MONTH) &&
+                                    txnCal.get(Calendar.YEAR) == now.get(Calendar.YEAR)) {
+
+                                double amount = parseDoubleSafe(txn.get("transactionAmount"));
+                                totalSpent += amount;
+                            }
+                        }
+                    }
+                }
+
+                isTransactionsLoaded = true;
+                tryNotify();
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                Log.e("TXN_ERROR", t.getMessage());
+            }
+        });
+    }
+
+    private void tryNotify() {
+
+        if (!isBudgetLoaded || !isTransactionsLoaded)
+            return;
+
+        if (totalBudget <= 0)
+            return;
+
+        int progress = (int) ((totalSpent / totalBudget) * 100);
+
+        String message = "Used ₹" + totalSpent +
+                " of ₹" + totalBudget +
+                " (" + progress + "%)";
+
+        NotificationHelper.showNotification(
+                this,
+                "Transaction Added 💸",
+                message);
+
+        checkThreshold(progress, message);
+
+        finish(); // ✅ close screen AFTER notification
+    }
+
+    private void checkThreshold(int progress, String message) {
+
+        if (progress >= 100 && lastNotifiedLevel < 100) {
+            notifyUser("Budget Exhausted 🚨", message);
+            lastNotifiedLevel = 100;
+
+        } else if (progress >= 75 && lastNotifiedLevel < 75) {
+            notifyUser("Warning ⚠️ (75%)", message);
+            lastNotifiedLevel = 75;
+
+        } else if (progress >= 50 && lastNotifiedLevel < 50) {
+            notifyUser("Half Budget Used (50%)", message);
+            lastNotifiedLevel = 50;
+
+        } else if (progress >= 25 && lastNotifiedLevel < 25) {
+            notifyUser("25% Budget Used", message);
+            lastNotifiedLevel = 25;
+        }
+    }
+
+    private void notifyUser(String title, String message) {
+        NotificationHelper.showNotification(this, title, message);
+    }
+
+    private double parseDoubleSafe(Object value) {
+        try {
+            return Double.parseDouble(String.valueOf(value));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private long parseLongSafe(Object value) {
+        try {
+            return (long) Double.parseDouble(String.valueOf(value));
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
