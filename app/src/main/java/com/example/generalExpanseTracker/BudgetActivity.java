@@ -20,8 +20,10 @@ import retrofit2.Response;
 
 import com.example.generalExpanseTracker.api.ApiClient;
 import com.example.generalExpanseTracker.api.ApiService;
+import com.example.generalExpanseTracker.BaseActivity;
 
-public class BudgetActivity extends AppCompatActivity {
+
+public class BudgetActivity extends BaseActivity {
 
     EditText edtBudget;
     Button btnSave;
@@ -38,6 +40,8 @@ public class BudgetActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_budget);
+
+        enableBackButton();
 
         edtBudget = findViewById(R.id.edtBudget);
         btnSave = findViewById(R.id.btnSave);

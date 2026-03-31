@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.generalExpanseTracker.api.ApiClient;
 import com.example.generalExpanseTracker.api.ApiService;
 import com.example.generalExpanseTracker.Model.PaymentRequest;
+import com.example.generalExpanseTracker.BaseActivity;
 
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddTransactionActivity extends AppCompatActivity {
+public class AddTransactionActivity extends BaseActivity {
 
     EditText edtAmount, edtDesc, edtBank;
     Spinner spinnerType;
@@ -36,6 +37,8 @@ public class AddTransactionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_transaction);
+
+        enableBackButton();
 
         String bankName = getSharedPreferences("app", MODE_PRIVATE)
                 .getString("bankName", "");

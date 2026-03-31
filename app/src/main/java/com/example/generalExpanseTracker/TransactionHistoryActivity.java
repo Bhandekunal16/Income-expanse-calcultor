@@ -11,12 +11,13 @@ import com.example.generalExpanseTracker.api.ApiClient;
 import com.example.generalExpanseTracker.api.ApiService;
 import com.example.generalExpanseTracker.Model.TransactionModel;
 import com.example.generalExpanseTracker.Adapter.TransactionAdapter;
+import com.example.generalExpanseTracker.BaseActivity;
 
 import java.util.*;
 
 import retrofit2.*;
 
-public class TransactionHistoryActivity extends AppCompatActivity {
+public class TransactionHistoryActivity extends BaseActivity {
 
     RecyclerView recyclerView;
     TransactionAdapter adapter;
@@ -27,6 +28,9 @@ public class TransactionHistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_history);
+
+
+        enableBackButton();
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
