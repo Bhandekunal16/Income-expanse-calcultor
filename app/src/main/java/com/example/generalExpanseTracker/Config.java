@@ -8,11 +8,9 @@ import java.io.InputStream;
 import java.util.Map;
 
 public class Config {
-
     private static Map<String, Object> config;
 
     public static void load(Context context) {
-
         try {
             InputStream input = context.getAssets().open("config.yml");
             Yaml yaml = new Yaml();
@@ -23,14 +21,11 @@ public class Config {
     }
 
     public static String get(String path) {
-
         String[] keys = path.split("\\.");
         Object value = config;
-
         for (String key : keys) {
             value = ((Map) value).get(key);
         }
-
         return value.toString();
     }
 }
