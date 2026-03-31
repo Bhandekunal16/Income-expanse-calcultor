@@ -80,15 +80,14 @@ public class TransactionHistoryActivity extends BaseActivity {
 
                     } catch (Exception e) {
                         Log.e("PARSE_ERROR", e.getMessage());
-                        Toast.makeText(TransactionHistoryActivity.this, "Parse error: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        notification("Parse error: " + e.getMessage());
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<Map<String, Object>> call, Throwable t) {
-                Toast.makeText(TransactionHistoryActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                notification("Error: " + t.getMessage());
             }
         });
     }
@@ -111,5 +110,9 @@ public class TransactionHistoryActivity extends BaseActivity {
         } catch (Exception e) {
             return 0L;
         }
+    }
+
+    private void notification(String string) {
+        Toast.makeText(TransactionHistoryActivity.this, string, Toast.LENGTH_SHORT).show();
     }
 }
