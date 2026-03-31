@@ -109,6 +109,16 @@
             android:layout_width="match_parent"
             android:layout_height="50dp" />
 
+        <Button
+            android:id="@+id/btnVpa"
+            android:text="Collect Money"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="#EEEEEE"
+            android:textColor="#333"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
     </LinearLayout>
 
 </ScrollView>

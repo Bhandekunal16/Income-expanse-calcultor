@@ -24,7 +24,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private TextView tvBalance;
-    private Button btnAddExpense, btnViewTransactions, btnBudget;
+    private Button btnAddExpense, btnViewTransactions, btnBudget, btnVpa;
     private BarChart barChart;
     private ApiService apiService;
     private String username, mobile;
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         btnAddExpense = findViewById(R.id.btnAddExpense);
         btnViewTransactions = findViewById(R.id.btnViewTransactions);
         btnBudget = findViewById(R.id.btnBudget);
+        btnVpa = findViewById(R.id.btnVpa);
         barChart = findViewById(R.id.BarChart);
 
         apiService = ApiClient.getClient().create(ApiService.class);
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         btnAddExpense.setOnClickListener(v -> startActivity(new Intent(this, AddTransactionActivity.class)));
         btnViewTransactions.setOnClickListener(v -> startActivity(new Intent(this, TransactionHistoryActivity.class)));
         btnBudget.setOnClickListener(v -> startActivity(new Intent(this, BudgetActivity.class)));
+        btnVpa.setOnClickListener(v -> startActivity(new Intent(this, VpaActivity.class)));
     }
 
     @Override

@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Map<String, Object> data = (Map<String, Object>) res.get("data");
                                 if (data != null && data.get("username") != null) {
                                     String username = data.get("username").toString();
+                                    String mobile = data.get("mobile").toString();
                                     List<Map<String, Object>> accounts = (List<Map<String, Object>>) data
                                             .get("accounts");
 
@@ -72,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 .putString("username", username)
                                                 .putString("bankName", bankName)
                                                 .putString("accountNumber", number)
+                                                .putString("mobile", mobile)
                                                 .putFloat("balance", balance != null ? balance.floatValue() : 0f)
                                                 .apply();
                                     }

@@ -22,6 +22,7 @@
         <activity android:name=".AddTransactionActivity" android:label="Add Transactions" />
         <activity android:name=".TransactionHistoryActivity" android:label="Transactions" />
         <activity android:name=".BudgetActivity" android:label="Budget Dashboard" />
+        <activity android:name=".VpaActivity" android:label="Collect Money" />
     </application>
 
 </manifest>

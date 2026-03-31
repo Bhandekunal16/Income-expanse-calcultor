@@ -18,6 +18,9 @@ public interface ApiService {
     @POST("get/account")
     Call<Map<String, Object>> loginUser(@Body Map<String, String> body);
 
+    @POST("update/user")
+    Call<Object> updateUser(@Body Map<String, String> body);
+
     @POST("create/payment")
     Call<Map<String, Object>> createPayment(@Body PaymentRequest request);
 
