@@ -1,9 +1,9 @@
 package com.example.generalExpanseTracker;
 
 public class Transaction {
-    String title;
-    double amount;
-    boolean isIncome;
+    private String title;
+    private double amount;
+    private boolean isIncome;
 
     public Transaction(String title, double amount, boolean isIncome) {
         this.title = title;
