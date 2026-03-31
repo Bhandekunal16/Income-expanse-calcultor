@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.widget.Toast;
 import android.util.Log;
 
+import java.util.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.*;
 
@@ -13,62 +15,47 @@ import com.example.generalExpanseTracker.Model.TransactionModel;
 import com.example.generalExpanseTracker.Adapter.TransactionAdapter;
 import com.example.generalExpanseTracker.BaseActivity;
 
-import java.util.*;
-
 import retrofit2.*;
 
 public class TransactionHistoryActivity extends BaseActivity {
-
-    RecyclerView recyclerView;
-    TransactionAdapter adapter;
-    List<TransactionModel> list = new ArrayList<>();
-    ApiService apiService;
+    private RecyclerView recyclerView;
+    private TransactionAdapter adapter;
+    private List<TransactionModel> list = new ArrayList<>();
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_history);
 
-
         enableBackButton();
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         adapter = new TransactionAdapter(list);
         recyclerView.setAdapter(adapter);
-
         apiService = ApiClient.getClient().create(ApiService.class);
-
         loadTransactions();
     }
 
     private void loadTransactions() {
-
-        String username = getSharedPreferences("app", MODE_PRIVATE)
-                .getString("username", "");
-
+        String username = getSharedPreferences("app", MODE_PRIVATE).getString("username", "");
         Log.d("username", username);
-
         Map<String, String> body = new HashMap<>();
         body.put("username", username);
-
         apiService.getTransactions(body).enqueue(new Callback<Map<String, Object>>() {
 
             @Override
-            public void onResponse(Call<Map<String, Object>> call,
-                    Response<Map<String, Object>> response) {
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
 
                 if (response.body() != null) {
                     Log.d("API_RESPONSE", response.body().toString());
                 }
 
                 if (response.isSuccessful() && response.body() != null) {
-
                     try {
                         Map<String, Object> res = response.body();
                         Object dataObj = res.get("data");
-
                         list.clear();
 
                         if (dataObj instanceof List) {
@@ -76,37 +63,24 @@ public class TransactionHistoryActivity extends BaseActivity {
 
                             for (Object obj : rawList) {
                                 if (obj instanceof Map) {
-
                                     Map<String, Object> item = (Map<String, Object>) obj;
-
-                                    // ✅ SAFE parsing
                                     String bankName = safeString(item.get("bankName"));
                                     String desc = safeString(item.get("transactionDesc"));
                                     String type = safeString(item.get("type"));
                                     String category = safeString(item.get("categories"));
-
                                     double amount = safeDouble(item.get("transactionAmount"));
                                     long time = safeLong(item.get("time"));
-
-                                    TransactionModel txn = new TransactionModel(
-                                            bankName,
-                                            desc,
-                                            type,
-                                            category,
-                                            amount,
+                                    TransactionModel txn = new TransactionModel(bankName, desc, type, category, amount,
                                             time);
-
                                     list.add(txn);
                                 }
                             }
                         }
-
                         adapter.notifyDataSetChanged();
 
                     } catch (Exception e) {
                         Log.e("PARSE_ERROR", e.getMessage());
-                        Toast.makeText(TransactionHistoryActivity.this,
-                                "Parse error: " + e.getMessage(),
+                        Toast.makeText(TransactionHistoryActivity.this, "Parse error: " + e.getMessage(),
                                 Toast.LENGTH_LONG).show();
                     }
                 }
@@ -114,9 +88,7 @@ public class TransactionHistoryActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<Map<String, Object>> call, Throwable t) {
-                Toast.makeText(TransactionHistoryActivity.this,
-                        "Error: " + t.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(TransactionHistoryActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
