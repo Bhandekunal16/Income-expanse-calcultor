@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.view.View;
 import android.widget.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import retrofit2.Call;
@@ -20,12 +21,9 @@ import com.example.generalExpanseTracker.Model.Account;
 import com.example.generalExpanseTracker.MainActivity;
 
 public class RegisterActivity extends AppCompatActivity {
-
-    EditText etName, etMobile, etEmail, etUsername, etPassword;
-    EditText etBank, etAccNumber, etBalance;
-    Button btnRegister;
-
-    ApiService apiService;
+    private EditText etName, etMobile, etEmail, etUsername, etPassword, etBank, etAccNumber, etBalance;
+    private Button btnRegister;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,15 +86,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         double balance = Double.parseDouble(balanceStr);
-
-        // Default type
         String type = "savings";
-
         List<Account> accounts = new ArrayList<>();
         accounts.add(new Account(type, number, bank, balance));
-
         User user = new User(name, mobile, email, username, password, accounts);
-
         Call<Object> call = apiService.registerUser(user);
 
         call.enqueue(new Callback<Object>() {
@@ -113,7 +106,6 @@ public class RegisterActivity extends AppCompatActivity {
                         .putString("number", number)
                         .putString("balanceStr", balanceStr)
                         .apply();
-
                 startActivity(intent);
                 finish();
             }
