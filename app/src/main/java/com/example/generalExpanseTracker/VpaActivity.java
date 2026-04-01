@@ -38,8 +38,8 @@ public class VpaActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSaveVpa);
 
         apiService = ApiClient.getClient().create(ApiService.class);
-        mobile = getSharedPreferences("app", MODE_PRIVATE).getString("mobile", "");
 
+        mobile = getData("mobile");
         loadAccount();
 
         btnSave.setOnClickListener(v -> saveVpa());
@@ -102,7 +102,7 @@ public class VpaActivity extends AppCompatActivity {
 
                                     Log.d("VPA_DEBUG", vpa);
                                     if (!vpa.isEmpty() && !"null".equalsIgnoreCase(vpa)) {
-                                        getSharedPreferences("app", MODE_PRIVATE).edit().putString("vpa", vpa).apply();
+                                        setData("vpa", vpa);
                                         showQR(vpa);
                                         return;
                                     }
@@ -130,8 +130,7 @@ public class VpaActivity extends AppCompatActivity {
             return;
         }
 
-        String username = getSharedPreferences("app", MODE_PRIVATE).getString("username", "");
-
+        String username = getData("username");
         Log.d("VPA_DEBUG_username", username);
         Map<String, String> body = new HashMap<>();
         body.put("username", username);
@@ -140,7 +139,7 @@ public class VpaActivity extends AppCompatActivity {
         apiService.updateUser(body).enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
-                getSharedPreferences("app", MODE_PRIVATE).edit().putString("vpa", vpa).apply();
+                setData("vpa", vpa);
                 showQR(vpa);
             }
 
@@ -201,5 +200,13 @@ public class VpaActivity extends AppCompatActivity {
 
     private void notification(String string) {
         Toast.makeText(VpaActivity.this, string, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setData(String key, String value) {
+        getSharedPreferences("app", MODE_PRIVATE).edit().putString(key, value).apply();
+    }
+
+    private String getData(String key) {
+        return getSharedPreferences("app", MODE_PRIVATE).getString(key, "");
     }
 }
