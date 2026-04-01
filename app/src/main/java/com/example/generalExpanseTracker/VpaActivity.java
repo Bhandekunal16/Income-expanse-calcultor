@@ -90,30 +90,19 @@ public class VpaActivity extends AppCompatActivity {
                         Object accObj = data.get("accounts");
 
                         if (accObj instanceof List) {
-
                             List<?> accounts = (List<?>) accObj;
 
                             if (!accounts.isEmpty() && accounts.get(0) instanceof Map) {
-
                                 Map<String, Object> acc = (Map<String, Object>) accounts.get(0);
-
                                 Object vpaObj = acc.get("vpa");
-
                                 Log.d("VPA_DEBUG", String.valueOf(vpaObj));
 
                                 if (vpaObj != null) {
                                     String vpa = String.valueOf(vpaObj);
 
                                     Log.d("VPA_DEBUG", vpa);
-
                                     if (!vpa.isEmpty() && !"null".equalsIgnoreCase(vpa)) {
-
-                                        // ✅ Save locally
-                                        getSharedPreferences("app", MODE_PRIVATE)
-                                                .edit()
-                                                .putString("vpa", vpa)
-                                                .apply();
-
+                                        getSharedPreferences("app", MODE_PRIVATE).edit().putString("vpa", vpa).apply();
                                         showQR(vpa);
                                         return;
                                     }
@@ -122,7 +111,6 @@ public class VpaActivity extends AppCompatActivity {
                         }
                     }
                 }
-
                 showInput();
             }
 
@@ -142,8 +130,7 @@ public class VpaActivity extends AppCompatActivity {
             return;
         }
 
-        String username = getSharedPreferences("app", MODE_PRIVATE)
-                .getString("username", "");
+        String username = getSharedPreferences("app", MODE_PRIVATE).getString("username", "");
 
         Log.d("VPA_DEBUG_username", username);
         Map<String, String> body = new HashMap<>();
@@ -153,13 +140,7 @@ public class VpaActivity extends AppCompatActivity {
         apiService.updateUser(body).enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
-
-                // ✅ Save locally
-                getSharedPreferences("app", MODE_PRIVATE)
-                        .edit()
-                        .putString("vpa", vpa)
-                        .apply();
-
+                getSharedPreferences("app", MODE_PRIVATE).edit().putString("vpa", vpa).apply();
                 showQR(vpa);
             }
 
@@ -181,49 +162,38 @@ public class VpaActivity extends AppCompatActivity {
         etVpa.setVisibility(View.GONE);
         btnSave.setVisibility(View.GONE);
         imgQR.setVisibility(View.VISIBLE);
-        etAmount.setVisibility(View.VISIBLE); // ✅ keep amount visible
+        etAmount.setVisibility(View.VISIBLE);
 
         String amount = etAmount.getText().toString().trim();
-
         String upiLink;
 
         if (!amount.isEmpty()) {
             try {
                 double amt = Double.parseDouble(amount);
-
                 if (amt <= 0)
                     return;
-
                 upiLink = "upi://pay?pa=" + vpa + "&am=" + amount + "&cu=INR";
-
             } catch (Exception e) {
-                return; // ignore invalid typing
+                return;
             }
         } else {
             upiLink = "upi://pay?pa=" + vpa;
         }
-
         Log.d("VPA_DEBUG", "QR: " + upiLink);
-
         generateQR(upiLink);
     }
 
     private void generateQR(String text) {
         try {
-            BitMatrix matrix = new MultiFormatWriter()
-                    .encode(text, BarcodeFormat.QR_CODE, 500, 500);
-
+            BitMatrix matrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, 500, 500);
             Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.RGB_565);
 
             for (int x = 0; x < 500; x++) {
                 for (int y = 0; y < 500; y++) {
-                    bitmap.setPixel(x, y,
-                            matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+                    bitmap.setPixel(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
                 }
             }
-
             imgQR.setImageBitmap(bitmap);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
