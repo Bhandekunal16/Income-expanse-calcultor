@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.generalExpanseTracker.api.ApiClient;
 import com.example.generalExpanseTracker.api.ApiService;
+
 import com.google.zxing.*;
 import com.google.zxing.common.BitMatrix;
 
@@ -20,12 +21,11 @@ import java.util.*;
 import retrofit2.*;
 
 public class VpaActivity extends AppCompatActivity {
-
-    EditText etVpa, etAmount;
-    Button btnSave;
-    ImageView imgQR;
-    ApiService apiService;
-    String mobile;
+    private EditText etVpa, etAmount;
+    private Button btnSave;
+    private ImageView imgQR;
+    private ApiService apiService;
+    private String mobile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +33,17 @@ public class VpaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vpa);
 
         etVpa = findViewById(R.id.etVpa);
-        btnSave = findViewById(R.id.btnSaveVpa);
-        imgQR = findViewById(R.id.imgQR);
         etAmount = findViewById(R.id.etAmount);
+        imgQR = findViewById(R.id.imgQR);
+        btnSave = findViewById(R.id.btnSaveVpa);
 
         apiService = ApiClient.getClient().create(ApiService.class);
-
-        mobile = getSharedPreferences("app", MODE_PRIVATE)
-                .getString("mobile", "");
+        mobile = getSharedPreferences("app", MODE_PRIVATE).getString("mobile", "");
 
         loadAccount();
 
         btnSave.setOnClickListener(v -> saveVpa());
 
-        // 🔥 Dynamic QR update on amount change
         etAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -58,9 +55,7 @@ public class VpaActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String vpa = getSharedPreferences("app", MODE_PRIVATE)
-                        .getString("vpa", "");
-
+                String vpa = getSharedPreferences("app", MODE_PRIVATE).getString("vpa", "");
                 if (vpa != null && !vpa.isEmpty()) {
                     showQR(vpa);
                 }
@@ -69,7 +64,6 @@ public class VpaActivity extends AppCompatActivity {
     }
 
     private void loadAccount() {
-
         Map<String, String> body = new HashMap<>();
         Log.d("VPA_DEBUG", mobile);
         body.put("mobile", mobile);
@@ -86,17 +80,13 @@ public class VpaActivity extends AppCompatActivity {
 
                 Map<String, Object> res = response.body();
                 Boolean status = (Boolean) res.get("status");
-
                 Log.d("VPA_DEBUG", String.valueOf(res));
 
                 if (status != null && status) {
-
                     Object dataObj = res.get("data");
 
                     if (dataObj instanceof Map) {
-
                         Map<String, Object> data = (Map<String, Object>) dataObj;
-
                         Object accObj = data.get("accounts");
 
                         if (accObj instanceof List) {
