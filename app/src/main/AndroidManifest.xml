@@ -4,6 +4,7 @@
 
     <application
         android:label="General Expense Tracker"
+        android:icon="@mipmap/icon"
         android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
 
         <activity

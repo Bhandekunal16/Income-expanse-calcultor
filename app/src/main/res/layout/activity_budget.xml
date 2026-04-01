@@ -17,7 +17,7 @@
             android:hint="Enter Budget"
             android:background="@android:drawable/edit_text"
             android:textColorHint="@color/black"
-        android:textColor="@color/black"
+            android:textColor="@color/black"
             android:inputType="numberDecimal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
