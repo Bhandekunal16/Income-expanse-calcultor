@@ -116,7 +116,7 @@ public class VpaActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Map<String, Object>> call, Throwable t) {
-                Toast.makeText(VpaActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                notification("Error");
                 showInput();
             }
         });
@@ -126,7 +126,7 @@ public class VpaActivity extends AppCompatActivity {
         String vpa = etVpa.getText().toString().trim();
 
         if (vpa.isEmpty()) {
-            Toast.makeText(this, "Enter VPA", Toast.LENGTH_SHORT).show();
+            notification("Enter VPA");
             return;
         }
 
@@ -146,7 +146,7 @@ public class VpaActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
-                Toast.makeText(VpaActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                notification("Failed");
             }
         });
     }
@@ -197,5 +197,9 @@ public class VpaActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void notification(String string) {
+        Toast.makeText(VpaActivity.this, string, Toast.LENGTH_SHORT).show();
     }
 }
