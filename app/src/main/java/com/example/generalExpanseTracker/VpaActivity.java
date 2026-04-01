@@ -157,12 +157,15 @@ public class VpaActivity extends AppCompatActivity {
         etAmount.setVisibility(View.GONE);
     }
 
-    private void showQR(String vpa) {
+    private void uiStates() {
         etVpa.setVisibility(View.GONE);
         btnSave.setVisibility(View.GONE);
         imgQR.setVisibility(View.VISIBLE);
         etAmount.setVisibility(View.VISIBLE);
+    }
 
+    private void showQR(String vpa) {
+        uiStates();
         String amount = etAmount.getText().toString().trim();
         String upiLink;
 
