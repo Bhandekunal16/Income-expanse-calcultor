@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         btnAddExpense.setOnClickListener(v -> startActivity(new Intent(this, AddTransactionActivity.class)));
         btnViewTransactions.setOnClickListener(v -> startActivity(new Intent(this, TransactionHistoryActivity.class)));
         btnBudget.setOnClickListener(v -> startActivity(new Intent(this, BudgetActivity.class)));
-        btnVpa.setOnClickListener(v -> startActivity(new Intent(this, VpaActivity.class)));
+        // btnVpa.setOnClickListener(v -> startActivity(new Intent(this, VpaActivity.class)));
     }
 
     @Override

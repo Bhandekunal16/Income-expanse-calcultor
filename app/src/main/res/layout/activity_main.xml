@@ -109,7 +109,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp" />
 
-        <Button
+        <!-- <Button
             android:id="@+id/btnVpa"
             android:text="Collect Money"
             android:textAllCaps="false"
@@ -117,7 +117,7 @@
             android:backgroundTint="#EEEEEE"
             android:textColor="#333"
             android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_height="50dp" /> -->
 
     </LinearLayout>
 
