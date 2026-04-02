@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         btnAddExpense = findViewById(R.id.btnAddExpense);
         btnViewTransactions = findViewById(R.id.btnViewTransactions);
         btnBudget = findViewById(R.id.btnBudget);
-        btnVpa = findViewById(R.id.btnVpa);
+        // btnVpa = findViewById(R.id.btnVpa);
         barChart = findViewById(R.id.BarChart);
 
         apiService = ApiClient.getClient().create(ApiService.class);
