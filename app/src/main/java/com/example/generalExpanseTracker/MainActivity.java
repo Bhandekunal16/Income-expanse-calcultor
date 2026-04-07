@@ -38,24 +38,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // ✅ Views
         tvBalance = findViewById(R.id.tvBalance);
         barChart = findViewById(R.id.BarChart);
 
-        // FloatingActionButton fab = findViewById(R.id.fabAdd);
         CardView cardAdd = findViewById(R.id.cardAdd);
         CardView cardTransactions = findViewById(R.id.cardTransactions);
         CardView cardBudget = findViewById(R.id.cardBudget);
-        // BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
 
-        // ✅ API
         apiService = ApiClient.getClient().create(ApiService.class);
         mobile = getIntent().getStringExtra("mobile");
         username = getSharedPreferences("app", MODE_PRIVATE).getString("username", "");
 
         refreshDashboard();
 
-        // 🔥 Card Actions
         if (cardAdd != null) {
             cardAdd.setOnClickListener(v -> startActivity(new Intent(this, AddTransactionActivity.class)));
         }
