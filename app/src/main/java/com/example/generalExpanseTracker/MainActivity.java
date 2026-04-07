@@ -6,6 +6,10 @@ import android.widget.*;
 import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -23,8 +27,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+
     private TextView tvBalance;
-    private Button btnAddExpense, btnViewTransactions, btnBudget, btnVpa;
     private BarChart barChart;
     private ApiService apiService;
     private String username, mobile;
@@ -34,23 +38,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // ✅ Views
         tvBalance = findViewById(R.id.tvBalance);
-        btnAddExpense = findViewById(R.id.btnAddExpense);
-        btnViewTransactions = findViewById(R.id.btnViewTransactions);
-        btnBudget = findViewById(R.id.btnBudget);
-        // btnVpa = findViewById(R.id.btnVpa);
         barChart = findViewById(R.id.BarChart);
 
+        // FloatingActionButton fab = findViewById(R.id.fabAdd);
+        CardView cardAdd = findViewById(R.id.cardAdd);
+        CardView cardTransactions = findViewById(R.id.cardTransactions);
+        CardView cardBudget = findViewById(R.id.cardBudget);
+        // BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+
+        // ✅ API
         apiService = ApiClient.getClient().create(ApiService.class);
         mobile = getIntent().getStringExtra("mobile");
         username = getSharedPreferences("app", MODE_PRIVATE).getString("username", "");
 
         refreshDashboard();
 
-        btnAddExpense.setOnClickListener(v -> startActivity(new Intent(this, AddTransactionActivity.class)));
-        btnViewTransactions.setOnClickListener(v -> startActivity(new Intent(this, TransactionHistoryActivity.class)));
-        btnBudget.setOnClickListener(v -> startActivity(new Intent(this, BudgetActivity.class)));
-        // btnVpa.setOnClickListener(v -> startActivity(new Intent(this, VpaActivity.class)));
+        // 🔥 Card Actions
+        if (cardAdd != null) {
+            cardAdd.setOnClickListener(v -> startActivity(new Intent(this, AddTransactionActivity.class)));
+        }
+
+        if (cardTransactions != null) {
+            cardTransactions.setOnClickListener(v -> startActivity(new Intent(this, TransactionHistoryActivity.class)));
+        }
+
+        if (cardBudget != null) {
+            cardBudget.setOnClickListener(v -> startActivity(new Intent(this, BudgetActivity.class)));
+        }
+
     }
 
     @Override
@@ -79,13 +96,13 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         Map<String, Object> res = response.body();
                         Boolean status = (Boolean) res.get("status");
+
                         if (status != null && status) {
                             Map<String, Object> data = (Map<String, Object>) res.get("data");
                             List<Map<String, Object>> accounts = (List<Map<String, Object>>) data.get("accounts");
 
                             if (accounts != null && !accounts.isEmpty()) {
-                                Map<String, Object> acc = accounts.get(0);
-                                double balance = safeDouble(acc.get("balance"));
+                                double balance = safeDouble(accounts.get(0).get("balance"));
                                 updateBalanceUI(balance);
                             }
                         }
@@ -105,44 +122,48 @@ public class MainActivity extends AppCompatActivity {
     private void loadStatistics(String username) {
         Map<String, String> body = new HashMap<>();
         body.put("username", username);
+
         apiService.getStatistics(body).enqueue(new Callback<Map<String, Object>>() {
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-
                     try {
-                        Map<String, Object> res = response.body();
-                        Map<String, Object> data = (Map<String, Object>) res.get("data");
+                        Map<String, Object> data = (Map<String, Object>) response.body().get("data");
+
                         if (data == null)
                             return;
+
                         List<String> dates = (List<String>) data.get("date");
                         Map<String, Object> dateWise = (Map<String, Object>) data.get("dateWise");
-                        List<BarEntry> creditEntries = new ArrayList<>();
-                        List<BarEntry> debitEntries = new ArrayList<>();
-                        int index = 0;
 
-                        for (String date : dates) {
-                            List<Map<String, Object>> txns = (List<Map<String, Object>>) dateWise.get(date);
-                            float creditSum = 0f;
-                            float debitSum = 0f;
+                        List<BarEntry> credit = new ArrayList<>();
+                        List<BarEntry> debit = new ArrayList<>();
+
+                        int i = 0;
+                        for (String d : dates) {
+                            List<Map<String, Object>> txns = (List<Map<String, Object>>) dateWise.get(d);
+
+                            float c = 0, de = 0;
 
                             if (txns != null) {
                                 for (Map<String, Object> txn : txns) {
                                     String type = safeString(txn.get("type"));
-                                    double amount = safeDouble(txn.get("transactionAmount"));
-                                    if ("credit".equalsIgnoreCase(type)) {
-                                        creditSum += amount;
-                                    } else {
-                                        debitSum += amount;
-                                    }
+                                    double amt = safeDouble(txn.get("transactionAmount"));
+
+                                    if ("credit".equalsIgnoreCase(type))
+                                        c += amt;
+                                    else
+                                        de += amt;
                                 }
                             }
 
-                            creditEntries.add(new BarEntry(index, creditSum));
-                            debitEntries.add(new BarEntry(index, debitSum));
-                            index++;
+                            credit.add(new BarEntry(i, c));
+                            debit.add(new BarEntry(i, de));
+                            i++;
                         }
-                        renderChart(dates, creditEntries, debitEntries);
+
+                        renderChart(dates, credit, debit);
+
                     } catch (Exception e) {
                         showToast("Parse error: " + e.getMessage());
                     }
@@ -157,51 +178,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateBalanceUI(double balance) {
-        DecimalFormat df = new DecimalFormat("₹0.00");
-        tvBalance.setText(df.format(balance));
-
-        if (balance >= 0) {
-            tvBalance.setTextColor(Color.parseColor("#22C55E"));
-        } else {
-            tvBalance.setTextColor(Color.parseColor("#EF4444"));
-        }
+        tvBalance.setText(new DecimalFormat("₹0.00").format(balance));
+        tvBalance.setTextColor(
+                balance >= 0 ? Color.parseColor("#22C55E") : Color.parseColor("#EF4444"));
     }
 
-    private void renderChart(List<String> labels, List<BarEntry> creditEntries, List<BarEntry> debitEntries) {
-        BarDataSet creditSet = new BarDataSet(creditEntries, "Credit");
-        creditSet.setColor(Color.parseColor("#22C55E"));
-        BarDataSet debitSet = new BarDataSet(debitEntries, "Debit");
-        debitSet.setColor(Color.parseColor("#EF4444"));
+    private void renderChart(List<String> labels,
+            List<BarEntry> credit,
+            List<BarEntry> debit) {
 
-        BarData data = new BarData(creditSet, debitSet);
+        BarDataSet cSet = new BarDataSet(credit, "Credit");
+        cSet.setColor(Color.parseColor("#22C55E"));
+
+        BarDataSet dSet = new BarDataSet(debit, "Debit");
+        dSet.setColor(Color.parseColor("#EF4444"));
+
+        BarData data = new BarData(cSet, dSet);
         data.setBarWidth(0.35f);
+
         barChart.setData(data);
         barChart.setFitBars(true);
         barChart.getXAxis().setAxisMinimum(0);
         barChart.getXAxis().setAxisMaximum(labels.size());
         barChart.groupBars(0f, 0.2f, 0.05f);
-        XAxis xAxis = barChart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
-        xAxis.setGranularity(1f);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        XAxis x = barChart.getXAxis();
+        x.setValueFormatter(new IndexAxisValueFormatter(labels));
+        x.setGranularity(1f);
+        x.setPosition(XAxis.XAxisPosition.BOTTOM);
+
         barChart.getDescription().setText("");
         barChart.animateY(800);
         barChart.invalidate();
     }
 
-    private String safeString(Object obj) {
-        return obj != null ? String.valueOf(obj) : "";
+    private String safeString(Object o) {
+        return o != null ? String.valueOf(o) : "";
     }
 
-    private double safeDouble(Object obj) {
+    private double safeDouble(Object o) {
         try {
-            return obj != null ? Double.parseDouble(String.valueOf(obj)) : 0;
+            return o != null ? Double.parseDouble(String.valueOf(o)) : 0;
         } catch (Exception e) {
             return 0;
         }
     }
 
     private void showToast(String msg) {
-        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }
