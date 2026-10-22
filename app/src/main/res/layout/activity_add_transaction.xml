@@ -1,60 +1,154 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@drawable/gradient_background_dark"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    
-    <EditText
-        android:id="@+id/edtAmount"
-        android:hint="Amount"
-        android:inputType="numberDecimal"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"
-        android:background="@android:drawable/edit_text"
-android:textColorHint="@color/black"
-        android:textColor="@color/black"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/gradient_background_dark"
+    android:clipToPadding="false">
 
-    <EditText
-        android:id="@+id/edtDesc"
-        android:hint="Description"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"
-        android:background="@android:drawable/edit_text"
-android:textColorHint="@color/black"
-        android:textColor="@color/black"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="28dp">
 
+        <!-- Page heading -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add transaction"
+            android:textColor="#FFFFFF"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-    <Spinner
-        android:id="@+id/spinnerType"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"
-        android:background="@android:drawable/edit_text"
-android:textColorHint="@color/black"
-        android:textColor="@color/black"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Record your income or expenses."
+            android:textColor="#98A6BB"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="28dp" />
 
-    <Spinner
-        android:id="@+id/spinnerCategory"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"
-        android:background="@android:drawable/edit_text"
-android:textColorHint="@color/black"
-        android:textColor="@color/black"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <!-- Amount -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Amount (₹)"
+            android:textColor="#DCE4F2"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
-    <Button
-        android:id="@+id/btnSubmit"
-        android:text="Add Transaction"
-        android:backgroundTint="@color/primary_green"
-        android:textColor="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        <EditText
+            android:id="@+id/edtAmount"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_phone_input"
+            android:hint="0.00"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#7F8BA3"
+            android:textSize="16sp"
+            android:autofillHints="transactionAmount"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Description -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textColor="#DCE4F2"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/edtDesc"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_phone_input"
+            android:hint="e.g. Groceries, salary, rent"
+            android:inputType="textCapSentences"
+            android:singleLine="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#7F8BA3"
+            android:textSize="15sp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Transaction type -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Transaction type"
+            android:textColor="#DCE4F2"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <Spinner
+            android:id="@+id/spinnerType"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_phone_input"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:spinnerMode="dropdown"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Category -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textColor="#DCE4F2"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <Spinner
+            android:id="@+id/spinnerCategory"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_phone_input"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:spinnerMode="dropdown"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Submit -->
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Add transaction"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_login_button"
+            android:stateListAnimator="@null"
+            android:minHeight="56dp"
+            android:padding="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Keep your finances organized, one transaction at a time."
+            android:textColor="#7F8BA3"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginTop="18dp" />
+
+    </LinearLayout>
+
+</ScrollView>
