@@ -19,7 +19,6 @@
         android:paddingTop="32dp"
         android:paddingBottom="32dp">
 
-        <!-- App branding -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +29,6 @@
             android:letterSpacing="0.08"
             android:layout_marginBottom="40dp" />
 
-        <!-- Heading -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,7 +47,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="32dp" />
 
-        <!-- Mobile number -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,7 +83,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="28dp" />
 
-        <!-- Primary action -->
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
@@ -101,7 +97,6 @@
             android:minHeight="56dp"
             android:padding="12dp" />
 
-        <!-- Registration -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
