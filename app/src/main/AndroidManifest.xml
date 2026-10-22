@@ -3,6 +3,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
+        android:name=".TrackerApplication"
         android:label="Daily Expense Tracker"
         android:icon="@mipmap/icon"
         android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -18,6 +19,9 @@
 
         </activity>
 
+        <activity
+            android:name=".AppLockActivity"
+            android:exported="false" />
         <activity android:name=".MainActivity" android:label="Dashboard" />
         <activity android:name=".RegisterActivity" android:label="Register"/>
         <activity android:name=".AddTransactionActivity" android:label="Add Transactions" />

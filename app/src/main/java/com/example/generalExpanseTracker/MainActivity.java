@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.*;
 import android.content.Intent;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -36,6 +38,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!SessionManager.isUnlocked()) {
+            Intent login = new Intent(this, LoginActivity.class);
+            login.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(login);
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_main);
 
         tvBalance = findViewById(R.id.tvBalance);
@@ -47,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
         apiService = ApiClient.getClient().create(ApiService.class);
         mobile = getIntent().getStringExtra("mobile");
+        if (mobile == null || mobile.isEmpty()) {
+            mobile = SessionManager.getStoredMobile(this);
+        }
         username = getSharedPreferences("app", MODE_PRIVATE).getString("username", "");
 
         refreshDashboard();
@@ -63,6 +75,24 @@ public class MainActivity extends AppCompatActivity {
             cardBudget.setOnClickListener(v -> startActivity(new Intent(this, BudgetActivity.class)));
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            SessionManager.clearSession(this);
+            Intent login = new Intent(this, LoginActivity.class);
+            login.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(login);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

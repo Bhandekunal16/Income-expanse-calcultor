@@ -94,23 +94,77 @@ public class RegisterActivity extends AppCompatActivity {
         call.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, Response<Object> response) {
-                notification(getStringByKey("register_success"));
-                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                intent.putExtra("mobile", mobile);
-                String username = etUsername.getText().toString();
-                getSharedPreferences("app", MODE_PRIVATE)
-                        .edit()
-                        .putString("username", username)
-                        .putString("bank", bank)
-                        .putString("number", number)
-                        .putString("balanceStr", balanceStr)
-                        .apply();
-                startActivity(intent);
-                finish();
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+                if (!response.isSuccessful()) {
+                    notification("Registration failed. Please try again.");
+                    return;
+                }
+                Object registrationResult = response.body();
+                if (registrationResult instanceof java.util.Map
+                        && Boolean.FALSE.equals(
+                                ((java.util.Map<?, ?>) registrationResult).get("status"))) {
+                    notification("Registration failed. Please check the details and try again.");
+                    return;
+                }
+
+                SessionManager.saveSession(RegisterActivity.this, mobile, username);
+                SessionManager.validateSavedSession(
+                        RegisterActivity.this,
+                        new SessionManager.ValidationCallback() {
+                            @Override
+                            public void onValid(java.util.Map<String, Object> account) {
+                                if (isFinishing() || isDestroyed()) {
+                                    return;
+                                }
+                                SessionManager.markUnlocked();
+                                getSharedPreferences("app", MODE_PRIVATE)
+                                        .edit()
+                                        .putString("username", username)
+                                        .putString("bank", bank)
+                                        .putString("bankName", bank)
+                                        .putString("number", number)
+                                        .putString("accountNumber", number)
+                                        .putString("balanceStr", balanceStr)
+                                        .apply();
+                                notification(getStringByKey("register_success"));
+                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                intent.putExtra("mobile", mobile);
+                                intent.addFlags(
+                                        Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onInvalid() {
+                                if (isFinishing() || isDestroyed()) {
+                                    return;
+                                }
+                                SessionManager.clearSession(RegisterActivity.this);
+                                notification("Account created, but could not verify it. Please sign in.");
+                            }
+
+                            @Override
+                            public void onError(String message) {
+                                if (isFinishing() || isDestroyed()) {
+                                    return;
+                                }
+                                SessionManager.clearSession(RegisterActivity.this);
+                                notification("Account created, but could not verify it: " + message);
+                                Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                loginIntent.addFlags(
+                                        Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(loginIntent);
+                            }
+                        });
             }
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
                 notification("Error: " + t.getMessage());
             }
         });
